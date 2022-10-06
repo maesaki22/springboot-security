@@ -21,6 +21,8 @@ public class User {
 		private String password;
 		private String email;
 		private String role;
+		private String provider;	// google id로그인
+		private String providerId; 	// google에서 사용하는 id저장
 		@CreationTimestamp
 		private Timestamp createDate;
 }
