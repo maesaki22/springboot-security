@@ -31,3 +31,9 @@ spring:
             scope:
             - email
             - profile
+          facebook:
+            client-id: 잠시
+            client-secret: 보류
+            scope:
+            - email
+            - public_profile
