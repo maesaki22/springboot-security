@@ -1,5 +1,7 @@
 package com.cos.security1.config.oauth;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -9,8 +11,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.cos.security1.config.auth.PrincipalDetails;
-import com.cos.security1.config.oauth.provider.FacebookleUserInfo;
+import com.cos.security1.config.oauth.provider.FacebookUserInfo;
 import com.cos.security1.config.oauth.provider.GoogleUserInfo;
+import com.cos.security1.config.oauth.provider.NaverUserInfo;
 import com.cos.security1.config.oauth.provider.OAuth2UserInfo;
 import com.cos.security1.model.User;
 import com.cos.security1.repository.UserRepository;
@@ -42,7 +45,11 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 			oAuth2UserInfo = new GoogleUserInfo(oauth2User.getAttributes());
 		}else if(userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
 			System.out.println("facebook");
-			oAuth2UserInfo = new FacebookleUserInfo(oauth2User.getAttributes());
+			oAuth2UserInfo = new FacebookUserInfo(oauth2User.getAttributes());
+		}else if(userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
+			System.out.println("naver");
+			// naver는 response 정보안에 response를 가져와야해서 두번들어간다.
+			oAuth2UserInfo = new NaverUserInfo((Map)oauth2User.getAttributes().get("response"));
 		}
 		// 인증후 돌아온정보로 강제 회원가입 ID설계는 내맘대로하는중
 		String provider = oAuth2UserInfo.getProvider();
@@ -55,7 +62,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 		User userEntity = userRepository.findByUsername(username);
 		
 		if(userEntity==null) {
-			System.out.println("새로운 사용자입니다 oauth 정보를 이용한 가입");
+			System.out.println(" oauth 최초사용");
 			userEntity = User.builder()
 					.username(username)
 					.password(password)
@@ -66,7 +73,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 					.build();
 			userRepository.save(userEntity);
 		}else {
-			System.out.println("구글사용자이고 이미 가입이 되어있습니다.");
+			System.out.println("oauth정보를 이미 등록하셨씁니다.");
 		}
 		
 		

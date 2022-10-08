@@ -72,11 +72,12 @@ public class IndexController {
 	// localhost:8080
 	// localhost:8080/
 	@GetMapping({ "", "/" })
-	public @ResponseBody String index() {
+	public @ResponseBody String index(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 		// 머스테치 는 springboot 기본이라 src/main/resourcses/
 		// 뷰리졸버 설정 : templates (pefix) , .mustache(suffix) :: html 파일을 읽으려면 config에서
 		// 설정을해줘야한다. WebMvcConfig
-		return "index Page";
+		String UserInfo = principalDetails.toString();
+		return UserInfo;
 	}
 
 	// OAuth 로그인 / 일반 로그인을 해도 PrincipalDetails로 받을수 있게 설계가 되었다.
